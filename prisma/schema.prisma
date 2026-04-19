@@ -1,0 +1,134 @@
+// FundOS 数据库模型
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 注意：
+// - 本地开发：DATABASE_URL="file:./dev.db"
+// - 线上部署：使用 Turso，配置 TURSO_DATABASE_URL 和 TURSO_AUTH_TOKEN
+
+// 销售人员
+model Salesperson {
+  id        String   @id @default(cuid())
+  name      String
+  avatar    String?
+  role      String   @default("sales") // sales | leader
+  teamId    String
+  phone     String
+  email     String
+
+  customers Customer[]
+  followUps FollowUp[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 基金产品
+model Product {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  name          String
+  type          String   // stock | bond | hybrid | money
+  nav           Float    // 最新净值
+  navDate       DateTime
+  navChange     Float    @default(0) // 日涨跌幅 %
+  aum           Float    // 规模（亿）
+  status        String   // raising | active | liquidated
+  riskLevel     String   // low | medium | high
+  manager       String   // 基金经理
+  establishDate DateTime
+  description   String?
+
+  holdings Holding[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 客户标签
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String   // 标签颜色
+  customers CustomerTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 客户-标签关联表
+model CustomerTag {
+  id         String   @id @default(cuid())
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId      String
+
+  createdAt DateTime @default(now())
+
+  @@unique([customerId, tagId])
+}
+
+// 客户
+model Customer {
+  id             String   @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  riskPreference String   // conservative | stable | aggressive
+  totalAssets    Float    @default(0) // 总持仓（万元）
+
+  salesperson   Salesperson @relation(fields: [salespersonId], references: [id])
+  salespersonId String
+
+  holdings  Holding[]
+  followUps FollowUp[]
+  tags      CustomerTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 持仓关系
+model Holding {
+  id           String   @id @default(cuid())
+  amount       Float    // 持仓金额（万元）
+  shares       Float    // 持有份额
+  cost         Float    // 成本价
+  purchaseDate DateTime
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([customerId, productId])
+}
+
+// 跟进记录
+model FollowUp {
+  id                String  @id @default(cuid())
+  type              String  // call | visit | meeting | other
+  content           String
+  relatedProductIds String? // JSON array of product IDs
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  salesperson   Salesperson @relation(fields: [salespersonId], references: [id])
+  salespersonId String
+
+  createdAt DateTime @default(now())
+}

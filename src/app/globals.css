@@ -1,26 +1,109 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* FundOS 金色主题 */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* 品牌色 - 琥珀金 */
+  --color-gold-50: #FFFBEB;
+  --color-gold-100: #FEF3C7;
+  --color-gold-400: #FBBF24;
+  --color-gold-500: #F59E0B;
+  --color-gold-600: #D97706;
+  --color-gold-700: #B45309;
+
+  /* 辅助色 - 深海蓝 */
+  --color-navy-100: #DBEAFE;
+  --color-navy-700: #2563EB;
+  --color-navy-800: #1E4976;
+  --color-navy-900: #1E3A5F;
+
+  /* 中性色 - 暖灰 */
+  --color-warm-50: #FAFAF9;
+  --color-warm-100: #F5F5F4;
+  --color-warm-200: #E7E5E4;
+  --color-warm-300: #D6D3D1;
+  --color-warm-400: #A8A29E;
+  --color-warm-500: #78716C;
+  --color-warm-600: #57534E;
+  --color-warm-700: #44403C;
+  --color-warm-800: #292524;
+  --color-warm-900: #1C1917;
+
+  /* 语义色 */
+  --color-up: #DC2626;      /* 涨 - 红色 */
+  --color-down: #16A34A;    /* 跌 - 绿色 */
+  --color-warning: #F59E0B;
+  --color-info: #2563EB;
+
+  /* 字体 */
+  --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 基础样式 */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-warm-50);
+  color: var(--color-warm-900);
+  font-family: var(--font-sans);
+}
+
+/* Ant Design 样式覆盖 */
+.ant-btn-primary {
+  background: var(--color-gold-600) !important;
+  border-color: var(--color-gold-600) !important;
+}
+
+.ant-btn-primary:hover {
+  background: var(--color-gold-700) !important;
+  border-color: var(--color-gold-700) !important;
+}
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-select-focused .ant-select-selector {
+  border-color: var(--color-gold-600) !important;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.1) !important;
+}
+
+.ant-table-thead > tr > th {
+  background: var(--color-warm-100) !important;
+  color: var(--color-warm-500) !important;
+  font-weight: 500 !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: var(--color-gold-50) !important;
+}
+
+.ant-table-tbody > tr.ant-table-row-selected > td {
+  background: var(--color-gold-100) !important;
+}
+
+.ant-pagination-item-active {
+  border-color: var(--color-gold-600) !important;
+}
+
+.ant-pagination-item-active a {
+  color: var(--color-gold-600) !important;
+}
+
+.ant-tag {
+  border-radius: 4px;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-warm-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-warm-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-warm-400);
 }
