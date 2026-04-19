@@ -1,13 +1,12 @@
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { appRouter } from '@/server/trpc/router';
-import { createTRPCContext } from '@/server/trpc';
-
-const handler = (req: Request) =>
-  fetchRequestHandler({
-    endpoint: '/api/trpc',
-    req,
-    router: appRouter,
-    createContext: createTRPCContext,
-  });
+const handler = () =>
+  new Response(
+    JSON.stringify({
+      message: 'API disabled — running in client-side mock mode',
+    }),
+    {
+      status: 410,
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
 
 export { handler as GET, handler as POST };
