@@ -1,6 +1,6 @@
 'use client';
 
-import { Table, Badge, Tag } from 'antd';
+import { Table, Badge, Tag, Empty } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { MessageCircle } from 'lucide-react';
 import { RiskPreferenceTag } from '@/components/common';
@@ -173,6 +173,14 @@ export function CustomerTable({
         onRow={(record) => ({
           onClick: () => openDrawer('customer', record.id),
         })}
+        locale={{
+          emptyText: (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="没有匹配的客户，换个关键词试试"
+            />
+          ),
+        }}
       />
     </div>
   );

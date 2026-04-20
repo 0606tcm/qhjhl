@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { message } from 'antd';
+import { message, Alert, Button } from 'antd';
 import { Layout } from '@/components/layout';
 import {
   CustomerFilters,
@@ -21,7 +21,7 @@ export default function CustomersPage() {
   const [pageSize, setPageSize] = useState(10);
   const [customerFormOpen, setCustomerFormOpen] = useState(false);
 
-  const { data, isLoading } = trpc.customer.list.useQuery({
+  const { data, isLoading, isError, refetch } = trpc.customer.list.useQuery({
     keyword: keyword || undefined,
     riskPreference: riskPreference as 'conservative' | 'stable' | 'aggressive' | undefined,
     salespersonId: viewMode === 'sales' ? currentUserId : undefined,
@@ -74,6 +74,19 @@ export default function CustomersPage() {
           onAddCustomer={() => setCustomerFormOpen(true)}
           onExport={handleExport}
         />
+
+        {isError && (
+          <Alert
+            type="error"
+            showIcon
+            message="客户列表加载失败"
+            action={
+              <Button size="small" onClick={() => refetch()}>
+                重试
+              </Button>
+            }
+          />
+        )}
 
         {/* 客户列表 */}
         <CustomerTable

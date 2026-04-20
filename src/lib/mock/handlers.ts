@@ -14,6 +14,7 @@ import {
 } from './data';
 import { PRODUCT_TYPE_MAP, FOLLOW_UP_TYPE_MAP } from '@/types';
 import type { ProductType, FollowUpType } from '@/types';
+import { runAgent } from './agent';
 
 type AnyInput = Record<string, unknown> | undefined;
 
@@ -409,37 +410,6 @@ export const mockHandlers: Record<string, (input: AnyInput) => unknown | Promise
     const { messages } = (input || {}) as {
       messages: { role: 'user' | 'assistant'; content: string }[];
     };
-    const last = messages[messages.length - 1]?.content || '';
-
-    if (/产品|基金/.test(last)) {
-      const top = [...products]
-        .filter((p) => p.status === 'active')
-        .sort((a, b) => b.aum - a.aum)
-        .slice(0, 5)
-        .map((p) => `· ${p.name}（${PRODUCT_TYPE_MAP[p.type]}，规模 ${p.aum.toFixed(2)}亿）`)
-        .join('\n');
-      return { content: `当前运作中规模前 5 的产品如下：\n${top}` };
-    }
-
-    if (/客户|持仓/.test(last)) {
-      const top = [...customers]
-        .sort((a, b) => b.totalAssets - a.totalAssets)
-        .slice(0, 5)
-        .map((c) => `· ${c.name}（持仓 ${c.totalAssets.toFixed(0)}万）`)
-        .join('\n');
-      return { content: `持仓规模前 5 的客户：\n${top}` };
-    }
-
-    if (/统计|概览|aum|规模/i.test(last)) {
-      const active = products.filter((p) => p.status === 'active');
-      const totalAum = active.reduce((s, p) => s + p.aum, 0);
-      return {
-        content: `当前客户数 ${customers.length}，运作中产品 ${active.length} 只，AUM 合计 ${totalAum.toFixed(2)} 亿。`,
-      };
-    }
-
-    return {
-      content: '你好，我是 FundOS 助手（Mock 模式）。可以问我：产品列表、客户持仓、整体统计等。',
-    };
+    return runAgent(messages);
   },
 };

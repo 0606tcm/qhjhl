@@ -7,7 +7,7 @@ import { trpc } from '@/lib/trpc';
 import { MessageList } from './MessageList';
 import { InputArea } from './InputArea';
 import { QuickCommands } from './QuickCommands';
-import type { AgentMessage } from '@/types';
+import type { AgentMessage, AgentResponseData } from '@/types';
 
 export function AgentPanel() {
   const {
@@ -29,16 +29,7 @@ export function AgentPanel() {
         id: `msg-${Date.now()}-assistant`,
         role: 'assistant',
         content: data.content,
-        data: data.data
-          ? {
-              type: 'query_result',
-              queryResult: {
-                title: '查询结果',
-                columns: [],
-                data: Array.isArray(data.data) ? data.data : [data.data],
-              },
-            }
-          : undefined,
+        data: (data as { data?: AgentResponseData }).data,
         timestamp: new Date(),
       };
       addAgentMessage(assistantMessage);
@@ -88,7 +79,7 @@ export function AgentPanel() {
   }
 
   return (
-    <div className="fixed bottom-0 right-0 w-[400px] h-[500px] bg-white shadow-xl border-t-2 border-gold-600 rounded-tl-lg z-50 flex flex-col">
+    <div className="fixed bottom-0 right-0 w-[480px] h-[620px] bg-white shadow-xl border-t-2 border-gold-600 rounded-tl-lg z-50 flex flex-col">
       {/* 头部 */}
       <div className="px-4 py-3 border-b border-warm-200 flex items-center justify-between">
         <div className="flex items-center gap-2">

@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import type { ViewMode, AgentMessage } from '@/types';
+import type { ViewMode, AgentMessage, FollowUpType } from '@/types';
+
+export interface FollowUpDraft {
+  customerId: string;
+  type?: FollowUpType;
+  content?: string;
+  relatedProductIds?: string[];
+}
 
 interface UIState {
   // 当前视角
@@ -20,11 +27,16 @@ interface UIState {
   // AI Agent 面板
   agentPanelOpen: boolean;
   toggleAgentPanel: () => void;
+  openAgentPanel: () => void;
   agentMessages: AgentMessage[];
   addAgentMessage: (message: AgentMessage) => void;
   clearAgentMessages: () => void;
   agentLoading: boolean;
   setAgentLoading: (loading: boolean) => void;
+
+  // 跟进草稿（由 Agent 辅助录入填充）
+  followUpDraft: FollowUpDraft | null;
+  setFollowUpDraft: (draft: FollowUpDraft | null) => void;
 }
 
 export const useStore = create<UIState>((set) => ({
@@ -47,10 +59,15 @@ export const useStore = create<UIState>((set) => ({
   // Agent 面板
   agentPanelOpen: false,
   toggleAgentPanel: () => set((state) => ({ agentPanelOpen: !state.agentPanelOpen })),
+  openAgentPanel: () => set({ agentPanelOpen: true }),
   agentMessages: [],
   addAgentMessage: (message) =>
     set((state) => ({ agentMessages: [...state.agentMessages, message] })),
   clearAgentMessages: () => set({ agentMessages: [] }),
   agentLoading: false,
   setAgentLoading: (loading) => set({ agentLoading: loading }),
+
+  // 跟进草稿
+  followUpDraft: null,
+  setFollowUpDraft: (draft) => set({ followUpDraft: draft }),
 }));

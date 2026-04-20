@@ -3,6 +3,7 @@
 import { User, Bot } from 'lucide-react';
 import type { AgentMessage } from '@/types';
 import { formatRelativeTime } from '@/lib/format';
+import { AgentResultCard } from './AgentResultCard';
 
 interface MessageItemProps {
   message: AgentMessage;
@@ -23,7 +24,11 @@ export function MessageItem({ message }: MessageItemProps) {
       </div>
 
       {/* 消息内容 */}
-      <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} max-w-[80%]`}>
+      <div
+        className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} ${
+          isUser ? 'max-w-[80%]' : 'max-w-[92%] flex-1'
+        }`}
+      >
         <div
           className={`px-4 py-2 rounded-lg ${
             isUser
@@ -33,6 +38,7 @@ export function MessageItem({ message }: MessageItemProps) {
         >
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         </div>
+        {!isUser && message.data && <AgentResultCard data={message.data} />}
         <span className="text-xs text-warm-400 mt-1">
           {formatRelativeTime(message.timestamp)}
         </span>

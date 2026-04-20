@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Drawer, Descriptions, Spin, Empty, Tabs } from 'antd';
+import { useEffect, useState } from 'react';
+import { Drawer, Descriptions, Spin, Empty, Tabs, Result, Button } from 'antd';
 import { X, User } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useStore } from '@/store';
@@ -14,14 +14,20 @@ import { CustomerTags } from './CustomerTags';
 import type { RiskPreference } from '@/types';
 
 export function CustomerDrawer() {
-  const { drawerOpen, drawerType, drawerEntityId, closeDrawer } = useStore();
+  const { drawerOpen, drawerType, drawerEntityId, closeDrawer, followUpDraft } = useStore();
   const [followUpFormOpen, setFollowUpFormOpen] = useState(false);
   const isOpen = drawerOpen && drawerType === 'customer' && !!drawerEntityId;
 
-  const { data, isLoading } = trpc.customer.byId.useQuery(
+  const { data, isLoading, isError, refetch } = trpc.customer.byId.useQuery(
     { id: drawerEntityId ?? '' },
     { enabled: !!drawerEntityId && drawerType === 'customer' }
   );
+
+  useEffect(() => {
+    if (isOpen && followUpDraft && followUpDraft.customerId === drawerEntityId) {
+      setFollowUpFormOpen(true);
+    }
+  }, [isOpen, followUpDraft, drawerEntityId]);
 
   const tabItems = data
     ? [
@@ -61,6 +67,17 @@ export function CustomerDrawer() {
           <div className="flex items-center justify-center h-64">
             <Spin size="large" />
           </div>
+        ) : isError ? (
+          <Result
+            status="error"
+            title="加载失败"
+            subTitle="请稍后再试"
+            extra={
+              <Button type="primary" onClick={() => refetch()} className="bg-gold-600">
+                重试
+              </Button>
+            }
+          />
         ) : data ? (
           <div className="space-y-6">
             {/* 客户头像和名称 */}

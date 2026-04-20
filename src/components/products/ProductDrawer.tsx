@@ -1,6 +1,6 @@
 'use client';
 
-import { Drawer, Descriptions, Table, Spin, Empty } from 'antd';
+import { Drawer, Descriptions, Table, Spin, Empty, Result, Button } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { X } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
@@ -25,7 +25,7 @@ export function ProductDrawer() {
   const { drawerOpen, drawerType, drawerEntityId, closeDrawer, openDrawer } = useStore();
   const isOpen = drawerOpen && drawerType === 'product' && !!drawerEntityId;
 
-  const { data, isLoading } = trpc.product.byId.useQuery(
+  const { data, isLoading, isError, refetch } = trpc.product.byId.useQuery(
     { id: drawerEntityId ?? '' },
     { enabled: !!drawerEntityId && drawerType === 'product' }
   );
@@ -86,6 +86,17 @@ export function ProductDrawer() {
         <div className="flex items-center justify-center h-64">
           <Spin size="large" />
         </div>
+      ) : isError ? (
+        <Result
+          status="error"
+          title="加载失败"
+          subTitle="请稍后再试"
+          extra={
+            <Button type="primary" onClick={() => refetch()} className="bg-gold-600">
+              重试
+            </Button>
+          }
+        />
       ) : data ? (
         <div className="space-y-6">
           {/* 产品名称和类型 */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Table } from 'antd';
+import { Table, Empty } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { ProductTypeTag, ProductStatusTag } from '@/components/common';
 import { formatNav, formatChange, formatDate } from '@/lib/format';
@@ -140,6 +140,14 @@ export function ProductTable({
         onRow={(record) => ({
           onClick: () => openDrawer('product', record.id),
         })}
+        locale={{
+          emptyText: (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="没有匹配的产品，试着调整筛选条件"
+            />
+          ),
+        }}
       />
     </div>
   );

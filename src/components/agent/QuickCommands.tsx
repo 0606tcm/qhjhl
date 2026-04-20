@@ -9,9 +9,21 @@ interface QuickCommandsProps {
 }
 
 const commands = [
-  { icon: <Search className="w-3 h-3" />, label: '产品查询', command: '帮我查询所有运作中的产品' },
-  { icon: <BarChart3 className="w-3 h-3" />, label: '数据统计', command: '告诉我当前的AUM总规模' },
-  { icon: <PenLine className="w-3 h-3" />, label: '录入跟进', command: '我想记录一条跟进内容' },
+  {
+    icon: <Search className="w-3 h-3" />,
+    label: '查客户持仓',
+    command: '林总持有哪些基金？',
+  },
+  {
+    icon: <BarChart3 className="w-3 h-3" />,
+    label: '类型占比',
+    command: '帮我生成按产品类型的规模占比饼图',
+  },
+  {
+    icon: <PenLine className="w-3 h-3" />,
+    label: '录入跟进',
+    command: '今天电话和张总聊了稳健增长一号，他打算下周认购50万',
+  },
 ];
 
 export function QuickCommands({ onCommand, disabled }: QuickCommandsProps) {

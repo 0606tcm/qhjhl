@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { message } from 'antd';
+import { message, Alert, Button } from 'antd';
 import { Layout } from '@/components/layout';
 import { ProductFilters, ProductTable, ProductDrawer } from '@/components/products';
 import { trpc } from '@/lib/trpc';
@@ -14,7 +14,7 @@ export default function ProductsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const { data, isLoading } = trpc.product.list.useQuery({
+  const { data, isLoading, isError, refetch } = trpc.product.list.useQuery({
     keyword: keyword || undefined,
     type: type as 'stock' | 'bond' | 'hybrid' | 'money' | undefined,
     status: status as 'raising' | 'active' | 'liquidated' | undefined,
@@ -72,6 +72,19 @@ export default function ProductsPage() {
           onClear={handleClearFilters}
           onExport={handleExport}
         />
+
+        {isError && (
+          <Alert
+            type="error"
+            showIcon
+            message="产品列表加载失败"
+            action={
+              <Button size="small" onClick={() => refetch()}>
+                重试
+              </Button>
+            }
+          />
+        )}
 
         {/* 产品列表 */}
         <ProductTable
