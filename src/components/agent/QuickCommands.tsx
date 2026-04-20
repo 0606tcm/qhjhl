@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from 'antd';
-import { Search, BarChart3, PenLine } from 'lucide-react';
+import { Search, PenLine } from 'lucide-react';
 
 interface QuickCommandsProps {
   onCommand: (command: string) => void;
@@ -13,11 +13,6 @@ const commands = [
     icon: <Search className="w-3 h-3" />,
     label: '查客户持仓',
     command: '林总持有哪些基金？',
-  },
-  {
-    icon: <BarChart3 className="w-3 h-3" />,
-    label: '类型占比',
-    command: '帮我生成按产品类型的规模占比饼图',
   },
   {
     icon: <PenLine className="w-3 h-3" />,

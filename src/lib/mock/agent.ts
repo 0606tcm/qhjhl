@@ -288,19 +288,6 @@ function toolQueryStatistics(args: { metric: string }): AgentResponseData {
 
 function toolRenderChart(args: { chart: string }): AgentResponseData | null {
   switch (args.chart) {
-    case 'product_distribution': {
-      const active = products.filter((p) => p.status === 'active');
-      const map = new Map<string, number>();
-      for (const p of active) map.set(p.type, (map.get(p.type) || 0) + p.aum);
-      const data = Array.from(map.entries()).map(([type, aum]) => ({
-        name: PRODUCT_TYPE_MAP[type as ProductType],
-        value: Number(aum.toFixed(2)),
-      }));
-      return {
-        type: 'chart',
-        chartConfig: { type: 'pie', title: '运作中产品类型规模占比', data },
-      };
-    }
     case 'aum_trend': {
       const months = ['2024-11', '2024-12', '2025-01', '2025-02', '2025-03', '2025-04'];
       const base = 10;
@@ -364,9 +351,6 @@ function routeIntent(rawText: string): AgentToolCall[] {
   const text = rawText.trim();
 
   // 图表意图
-  if (/(占比|分布|规模占比)/.test(text) && /(产品|类型)/.test(text)) {
-    return [{ name: 'render_chart', args: { chart: 'product_distribution' } }];
-  }
   if (/(趋势|走势|近半年|近6个月)/.test(text) && /(aum|规模)/i.test(text)) {
     return [{ name: 'render_chart', args: { chart: 'aum_trend' } }];
   }
@@ -480,7 +464,7 @@ const HELP_TEXT = [
   '  · 按类型/状态查产品，如「运作中的债券型产品有哪些」',
   '  · 查客户持仓，如「林总持有哪些股票型产品」',
   '  · 查产品持有人，如「价值精选一号 有哪些客户买了」',
-  '  · 出图表，如「帮我生成按产品类型的规模占比饼图」',
+  '  · 出图表，如「AUM 近半年的走势」「团队销售排行」',
   '  · 录入跟进，如「今天电话和李总聊了稳健增长一号，他打算下周认购 50 万」',
 ].join('\n');
 
@@ -497,7 +481,7 @@ export function runAgent(messages: { role: 'user' | 'assistant'; content: string
     }
     return {
       content:
-        '我没完全 get 到你的意图。可以试试：\n  · 「运作中的股票型产品」\n  · 「林总持有哪些基金」\n  · 「帮我生成产品类型占比饼图」\n  · 「电话回访了张总，沟通了稳健增长一号」',
+        '我没完全 get 到你的意图。可以试试：\n  · 「运作中的股票型产品」\n  · 「林总持有哪些基金」\n  · 「AUM 近半年的走势」\n  · 「电话回访了张总，沟通了稳健增长一号」',
     };
   }
 
